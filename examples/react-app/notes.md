@@ -97,3 +97,55 @@ dive counter-app:latest
 ```
 
 - `dive` is a tool to explore Docker images, showing layers, file sizes, and contents.
+
+### Step 6: Deployments
+
+- **Github actions**: Automate builds and deployments using GitHub Actions.
+- **Github registry**: Store Docker images in GitHub's container registry.
+- **render.com**: A platform for deploying web applications, including Docker containers.
+
+```
+name: Docker
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./examples/react-app
+          file: ./examples/react-app/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}-react-app:latest
+```
+
+#### Steps to setup render.com
+
+- Create a new web service
+- Choose existing image from GitHub Container Registry
+- ghcr.io/udhaya21/d3-workshop-react-app:latest
+- Choose "Free" plan
+- Deploy
