@@ -1,6 +1,7 @@
 FROM node:alpine AS base
-# Corepack is used to manage package managers like pnpm
 RUN corepack enable
+
+# Build stage
 FROM base AS build
 WORKDIR /app/counter-app
 COPY . .
