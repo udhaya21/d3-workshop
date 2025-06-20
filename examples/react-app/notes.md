@@ -8,7 +8,7 @@ CMD ["echo", "Hello world"]
 ```
 
 ```
-docker build -f docker/Dockerfile -t my-sample:latest .
+docker build -f Dockerfile -t my-sample:latest .
 docker run my-sample:latest
 ```
 
@@ -47,13 +47,16 @@ docker run counter-app:latest -p 3000:3000
 ### Step 4: Dockerfile with counter app
 
 ```
+#Base stage
 FROM node:alpine AS base
 RUN corepack enable
+#Build stage
 FROM base AS build
 WORKDIR /app/counter-app
 COPY . .
 RUN pnpm install
 RUN pnpm build
+#Dist stage
 FROM base AS dist
 WORKDIR /app/dist
 COPY --from=build /app/counter-app/dist .
